@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>BraveDrop – Upgrades</title>
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+  <link rel="stylesheet" href="{% static 'css/upgrades.css' %}?v=2.6.1">
+  <link rel="stylesheet" href="{% static 'css/header.css' %}">
+  <link rel="icon" href="{% static 'img/BrowIcon.png' %}" type="image/png">
+</head>
+<body class="page-dark">
+  <div id="page-preloader"><div class="spinner"></div></div>
+  <div class="top-header">
+    <div class="logo">
+      <button type="button" onclick="location.href='{% url 'main:cases_list' %}'">
+        <img src="{% static 'img/BraveLogo.png' %}" alt="LOGO">
+      </button>
+    </div>
+    <nav class="main-nav">
+      <button class="upgrade" onclick="location.href='{% url 'main:upgrades' %}'"><span>UPGRADES</span></button>
+      <button class="contract" onclick="location.href='{% url 'main:contracts' %}'"><span>CONTRACTS</span></button>
+    </nav>
+    <div class="header-actions">
+      {% url 'social:begin' 'steam' as steam_login_url %}
+      {% if request.user.is_authenticated %}
+        <div class="profile-info">
+          <div class="profile-text">
+            <div class="nickname">{{ request.user.username }}</div>
+            <div class="balance" id="balanceValue">${{ request.user.profile.balance|floatformat:2 }}</div>
+          </div>
+          <button class="profile-avatar-btn" onclick="location.href='{% url 'main:profile' %}'">
+            {% if request.user.profile.steam_avatar %}
+              <img class="profile-avatar" src="{{ request.user.profile.steam_avatar }}" alt="avatar">
+            {% else %}
+              <img class="profile-avatar" src="{% static 'img/placeholder_avatar.png' %}" alt="avatar">
+            {% endif %}
+          </button>
+        </div>
+      {% else %}
+        <div class="profile-info">
+          <a class="btn-login" href="{{ steam_login_url }}?next={{ request.path }}">
+            LOGIN
+            <img src="{% static 'img/SteamLogo.png' %}" alt="Steam" class="steam-logo">
+          </a>
+        </div>
+      {% endif %}
+      <div class="burger-menu-wrapper">
+        <button class="back-button" id="burgerBtn">
+          <img src="{% static 'img/BackButtonsIcon.png' %}" class="back-icon" alt="menu">
+        </button>
+        <div id="miniMenu" class="mini-menu">
+          {% if request.user.is_authenticated %}
+            <div class="mini-top">
+              {% if request.user.profile.steam_avatar %}
+                <img class="mini-avatar" src="{{ request.user.profile.steam_avatar }}" alt="avatar">
+              {% else %}
+                <img class="mini-avatar" src="{% static 'img/placeholder_avatar.png' %}" alt="avatar">
+              {% endif %}
+              <div class="mini-nick">{{ request.user.username }}</div>
+            </div>
+            <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:upgrades' %}'">UPGRADES</button>
+            <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:contracts' %}'">CONTRACTS</button>
+            <button class="mini-btn" onclick="location.href='{% url 'main:add_balance' %}'">REFILL</button>
+            <button class="mini-btn" onclick="location.href='{% url 'main:profile' %}'">PROFILE</button>
+            <button class="mini-exit" onclick="location.href='{% url 'main:logout' %}'">LOGOUT</button>
+          {% else %}
+            <div class="mini-top">
+              <img class="mini-avatar" src="{% static 'img/guest_avatar.png' %}" alt="Guest">
+              <div class="mini-nick">Guest</div>
+            </div>
+            <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:upgrades' %}'">UPGRADES</button>
+            <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:contracts' %}'">CONTRACTS</button>
+            <button class="mini-btn" onclick="location.href='{{ steam_login_url }}?next={{ request.path }}'">REFILL</button>
+            <button class="mini-btn" onclick="location.href='{{ steam_login_url }}?next={{ request.path }}'">PROFILE</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="menuDimmer" class="menu-dimmer"></div>
+
+  <main class="up-wrapper">
+    <h1 class="page-title">UPGRADES</h1>
+
+    <section class="wheel-sec">
+      <div class="wheel-wrap">
+        <svg width="260" height="260" viewBox="0 0 260 260">
+          <circle class="track" cx="130" cy="130" r="120"/>
+          <circle id="arcFill" class="arc" cx="130" cy="130" r="120" transform="rotate(-90 130 130)"/>
+        </svg>
+        <div id="pointer" class="pointer"></div>
+        <div id="chanceTxt" class="chance-label">0%</div>
+        <div id="resultCircle" class="result-circle"></div>
+      </div>
+
+      <button id="upgradeBtn" class="btn-run" disabled>UPGRADE</button>
+      <button id="howPlayBtn" class="btn-how">HOW TO PLAY?</button>
+
+      <div class="range-shell">
+        <input
+          id="extraInput"
+          type="range"
+          min="0"
+          max="{% if user.is_authenticated %}{{ user.profile.balance|floatformat:0 }}{% else %}0{% endif %}"
+          step="1"
+          value="0"
+          {% if not request.user.is_authenticated or user.profile.balance|floatformat:0 == '0' %}disabled{% endif %}>
+        <span id="extraLabel">0₽</span>
+      </div>
+
+      <div class="used-label">Used: <span id="usedValue" class="accent">0.00₽</span></div>
+    </section>
+
+    {% if request.user.is_authenticated %}
+      <section class="panels-row">
+        <div class="panel" id="invPanel">
+          <div class="panel-head">
+            <h3>My Items</h3>
+            <button id="invSortBtn" data-dir="desc">Price ↓</button>
+          </div>
+          <div class="scrollable">
+            <div id="leftGrid" class="items-grid"></div>
+          </div>
+          <div class="panel-overlay"><div class="spinner"></div></div>
+        </div>
+        <div class="panel" id="targetPanel">
+          <div class="panel-head">
+            <h3>Target Item</h3>
+            <button id="targetSortBtn" data-dir="desc">Price ↓</button>
+          </div>
+          <div class="scrollable" id="rightScrollable">
+            <div id="rightGrid" class="items-grid"></div>
+          </div>
+          <div class="panel-overlay" id="rightOverlay"><div class="spinner"></div></div>
+        </div>
+      </section>
+    {% else %}
+      <div class="need-login-message">You must log in to access</div>
+    {% endif %}
+  </main>
+
+  <div id="howOverlay" class="how-overlay">
+    <div id="howTut" class="how-tut">
+      <div class="how-panel">
+        <span class="step-num">1</span>
+        <h4>CHOOSE</h4>
+        <p>Select between 1 and 10 items from your inventory on the left to upgrade.</p>
+      </div>
+      <div class="how-panel">
+        <span class="step-num">2</span>
+        <h4>UPGRADE</h4>
+        <p>Choose one item on the right to receive in return. Use balance to increase your chance.</p>
+      </div>
+      <div class="how-panel">
+        <span class="step-num">3</span>
+        <h4>WIN</h4>
+        <p>Chance up to 75% depends on your items’ value (+ balance) and the desired skin. On failure, you lose selected items and balance.</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.leftItems  = JSON.parse('{{ left_items_json|safe }}');
+    window.rightItems = [];
+    window.urls = {
+      createUpgrade : "{% url 'main:create_upgrade' %}",
+      loadTargets   : "{% url 'main:load_targets' %}",
+      csrf          : "{{ csrf_token }}"
+    };
+    window.isAuthenticated = {{ request.user.is_authenticated|yesno:"true,false" }};
+  </script>
+  <script src="{% static 'js/upgrades.js' %}?v=2.6.1"></script>
+</body>
+</html>

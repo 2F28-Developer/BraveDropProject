@@ -1,0 +1,26 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static %}
+
+{% block title %}Import items for {{ case.title }}{% endblock %}
+
+{% block content %}
+  <h1>Import items into case</h1>
+  <form method="post">{% csrf_token %}
+    <div>
+      <label for="id_source_url">Case page URL:</label><br>
+      <input type="url" name="source_url" id="id_source_url"
+             placeholder="https://wiki.cs.money/.../case" style="width: 100%">
+    </div>
+    <br>
+    <button type="submit" class="default">Run import</button>
+    <a href="../" class="button">Cancel</a>
+  </form>
+  <br>
+  {% if messages %}
+    <ul class="messagelist">
+      {% for msg in messages %}
+        <li class="{{ msg.tags }}">{{ msg }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+{% endblock %}

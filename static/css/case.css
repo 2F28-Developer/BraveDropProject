@@ -1,0 +1,300 @@
+/* ────────── 1. Case Title ──────────
+   Center and style the case heading */
+h1.case-title {
+  text-align: center;
+  margin: 24px 0;
+  color: #fff;
+  font-size: 24px;
+  font-weight: 700;
+}
+
+/* ────────── 2. Full-width roulette container ──────────
+   Stretch the roulette to viewport width */
+.case-roulette {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(50% - 50vw);
+  left: auto;
+  transform: none;
+  padding: 0;
+}
+
+/* ────────── 3. Viewport & Track ──────────
+   Clip overflow and arrange items horizontally */
+.roulette-viewport {
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+}
+.roulette-track {
+  display: flex;
+  will-change: transform;
+}
+
+/* ────────── 4. Indicator Bars ──────────
+   Highlight start and end of viewport */
+.indicator-bar {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 120px;
+  height: 4px;
+  background: #e9ab39;
+  border-radius: 2px;
+  z-index: 10;
+}
+.indicator-bar.top    { top: 0; }
+.indicator-bar.bottom { bottom: 0; }
+
+/* ────────── 5. Item Card Base Styles ──────────
+   Size and base appearance for each prize card */
+.item-card {
+  position: relative;
+  width: 170px;
+  height: 220px;
+  margin: 0 1px;
+  border-radius: 8px;
+  background: #1b1b22;
+  overflow: hidden;
+  flex: 0 0 auto;
+  transition: opacity .5s ease;
+  pointer-events: none;
+}
+.item-card.faded {
+  opacity: .4;
+}
+
+/* ────────── 6. Item Card Overlays ──────────
+   Gradient and logo background overlays */
+.item-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, var(--r-full) 0%, var(--r-light) 100%);
+  opacity: .35;
+}
+.item-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url('/static/img/LogoItems.png') center/70px no-repeat;
+  opacity: .28;
+}
+
+/* ────────── 7. Item Content (Image, Weapon, Skin) ──────────
+   Center image and position text labels */
+.item-img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 130px;
+  height: 130px;
+  transform: translate(-50%, -50%);
+  object-fit: contain;
+  z-index: 2;
+}
+.roulette-track .item-card .item-weapon {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  color: #ccc;
+  z-index: 3;
+}
+.roulette-track .item-card .item-skin {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #ddd;
+  z-index: 3;
+}
+
+/* ────────── 8. Content Section (Title & Cards) ──────────
+   Layout prize contents below roulette */
+.content-title {
+  margin: 20px 0;
+  text-align: center;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  text-transform: uppercase;
+  transition: transform .5s ease;
+  transform: translateY(-5px);
+}
+.content-title.shifted {
+  transform: translateY(10px);
+}
+.content-cards {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 40px;
+  transition: transform .5s ease;
+  transform: translateY(0);
+}
+.content-cards.shifted {
+  transform: translateY(15px);
+}
+.content-cards .item-card {
+  width: 170px;
+  height: 130px;
+  pointer-events: none;
+}
+
+/* ────────── 9. Action Area & Buttons ──────────
+   Center open/sell controls */
+.action-area {
+  position: relative;
+  height: 60px;
+  margin-top: 15px;
+}
+.action-area > * {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .5s ease;
+}
+.action-area > *.visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+.action-area button {
+  background: #e9ab39;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  text-transform: none;
+  transition: filter .3s;
+  padding: 0 32px;
+  min-width: 140px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+  max-width: 200px;
+}
+.action-area button:hover {
+  filter: brightness(1.1);
+}
+
+/* ────────── 10. Result Buttons & Sell Button ──────────
+   Layout for post-spin options */
+.result-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+#sell-btn {
+  padding: 0 40px;
+}
+
+/* ────────── 11. Notices & Spinner ──────────
+   Style for warning text and loading spinner */
+.btn-notice {
+  font-size: 16px;
+  padding: 8px 24px;
+  transition: opacity .5s ease;
+}
+.notice-text {
+  color: #e9ab39;
+}
+.notice-amount {
+  color: #e94b39;
+}
+.spinner {
+  width: 24px;
+  height: 24px;
+  margin: 0 auto;
+  border: 3px solid #ccc;
+  border-top-color: #e9ab39;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+.spinner-text {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #fff;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ────────── 12. Global Defaults ──────────
+   Disable drag/select for media and links */
+img, a {
+  -webkit-user-drag: none;
+  user-drag: none;
+  user-select: none;
+}
+
+/* ────────── 13. Responsive Adjustments (max-width: 500px) ────────── */
+@media (max-width: 500px) {
+  .content-cards {
+    justify-content: center;
+  }
+  .content-cards .item-card {
+    flex: 0 0 calc(50% - 10px);
+  }
+  h1.case-title {
+    font-size: 20px;
+    margin: 24px 0;
+  }
+  .content-title {
+    font-size: 16px;
+  }
+  .notice-text,
+  .spinner-text {
+    font-size: 12px;
+  }
+  .action-area .btn-main {
+    font-size: 14px;
+    padding: 0 16px;
+  }
+}
+
+/* ────────── 14. Overrides & Fine-tuning ──────────
+   Pixel-perfect tweaks for layout */
+.roulette-track .item-card .item-skin {
+  top: auto;
+  bottom: 12px;
+}
+.content-cards .item-card .item-img {
+  width: 80px;
+  height: 80px;
+}
+.item-img,
+.content-cards .item-card .item-img {
+  width: 90px !important;
+  height: 90px !important;
+}
+.roulette-track .item-img {
+  width: 130px !important;
+  height: 130px !important;
+}
+.content-cards .item-card {
+  border: none !important;
+}
+#login-notice .notice-text {
+  white-space: nowrap;
+}
+.btn-notice,
+.notice-text,
+.notice-amount {
+  white-space: nowrap;
+}

@@ -1,0 +1,165 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BraveDrop – Contracts</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <meta name="csrf-token"          content="{{ csrf_token }}">
+  <meta name="create-contract-url" content="{% url 'main:create_contract' %}">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/header.css' %}">
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+  <link rel="stylesheet" href="{% static 'css/contracts.css' %}?v=1.5">
+  <link rel="icon" href="{% static 'img/BrowIcon.png' %}" type="image/png">
+</head>
+<body>
+<div id="page-preloader"><div class="spinner"></div></div>
+
+<div class="top-header">
+  <div class="logo">
+    <button type="button" onclick="location.href='{% url 'main:cases_list' %}'">
+      <img src="{% static 'img/BraveLogo.png' %}" alt="LOGO">
+    </button>
+  </div>
+
+  <nav class="main-nav">
+    <button class="upgrade"  onclick="location.href='{% url 'main:upgrades' %}'"><span>UPGRADES</span></button>
+    <button class="contract active" onclick="location.href='{% url 'main:contracts' %}'"><span>CONTRACTS</span></button>
+  </nav>
+
+  <div class="header-actions">
+    {% url 'social:begin' 'steam' as steam_login_url %}
+    {% if request.user.is_authenticated %}
+      <div class="profile-info">
+        <div class="profile-text">
+          <div class="nickname">{{ request.user.username }}</div>
+          <div class="balance" id="balanceValue">${{ request.user.profile.balance|floatformat:2 }}</div>
+        </div>
+        <button class="profile-avatar-btn" onclick="location.href='{% url 'main:profile' %}'">
+          {% if request.user.profile.steam_avatar %}
+            <img class="profile-avatar" src="{{ request.user.profile.steam_avatar }}" alt="avatar">
+          {% else %}
+            <img class="profile-avatar" src="{% static 'img/placeholder_avatar.png' %}" alt="avatar">
+          {% endif %}
+        </button>
+      </div>
+    {% else %}
+      <div class="profile-info">
+        <a class="btn-login" href="{{ steam_login_url }}?next={{ request.path }}">
+          LOGIN <img src="{% static 'img/SteamLogo.png' %}" alt="Steam" class="steam-logo">
+        </a>
+      </div>
+    {% endif %}
+
+    <div class="burger-menu-wrapper">
+      <button class="back-button" id="burgerBtn">
+        <img src="{% static 'img/BackButtonsIcon.png' %}" class="back-icon" alt="menu">
+      </button>
+      <div id="miniMenu" class="mini-menu">
+        {% if request.user.is_authenticated %}
+          <div class="mini-top">
+            {% if request.user.profile.steam_avatar %}
+              <img class="mini-avatar" src="{{ request.user.profile.steam_avatar }}" alt="avatar">
+            {% else %}
+              <img class="mini-avatar" src="{% static 'img/placeholder_avatar.png' %}" alt="avatar">
+            {% endif %}
+            <div class="mini-nick">{{ request.user.username }}</div>
+          </div>
+          <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:upgrades' %}'">UPGRADES</button>
+          <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:contracts' %}'">CONTRACTS</button>
+          <button class="mini-btn" onclick="location.href='{% url 'main:add_balance' %}'">REFILL</button>
+          <button class="mini-btn" onclick="location.href='{% url 'main:profile' %}'">PROFILE</button>
+          <button class="mini-exit" onclick="location.href='{% url 'main:logout' %}'">LOGOUT</button>
+        {% else %}
+          <div class="mini-top">
+            <img class="mini-avatar" src="{% static 'img/guest_avatar.png' %}" alt="Guest">
+            <div class="mini-nick">Guest</div>
+          </div>
+          <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:upgrades' %}'">UPGRADES</button>
+          <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:contracts' %}'">CONTRACTS</button>
+          <button class="mini-btn" onclick="location.href='{{ steam_login_url }}?next={{ request.path }}'">REFILL</button>
+          <button class="mini-btn" onclick="location.href='{{ steam_login_url }}?next={{ request.path }}'">PROFILE</button>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+<div id="menuDimmer" class="menu-dimmer"></div>
+<div id="toastContainer"></div>
+
+<h1 class="contracts-page-title">CONTRACTS</h1>
+
+<div class="main-container contracts-page">
+  <div class="contract-section">
+    <div class="contract-bg-circle"></div>
+
+    <div class="contract-circle" id="contractCircle">
+      <div class="slot" data-index="1">1</div>
+      <div class="slot" data-index="2">2</div>
+      <div class="slot" data-index="3">3</div>
+      <div class="slot" data-index="4">4</div>
+      <div class="slot" data-index="5">5</div>
+      <div class="slot" data-index="6">6</div>
+      <div class="slot" data-index="7">7</div>
+      <div class="slot" data-index="8">8</div>
+      <div class="slot" data-index="9">9</div>
+      <div class="slot" data-index="10">10</div>
+    </div>
+
+    <div class="contract-center" id="contractCenter">
+      <button id="howPlayBtn" class="btn-how">HOW TO PLAY?</button>
+
+      <div class="contract-panel">
+        <div class="contract-title">Create Contract</div>
+        <button id="create-contract" class="contract-action" disabled>
+          <span class="cnt">0 items</span><br>
+          <span class="sum">$0</span>
+        </button>
+      </div>
+      <div class="contract-hint">Min. 3 items</div>
+    </div>
+
+    <div class="contract-result" id="contractResult">
+      <div class="result-title">YOU RECEIVED</div>
+      <div class="result-img"></div>
+      <div class="result-name"></div>
+      <div class="result-price"></div>
+    </div>
+  </div>
+
+  {% if request.user.is_authenticated %}
+    <h2 class="contracts-heading">Available items for contract</h2>
+    <div id="inventoryWrapper">
+      <div class="inventory-panel" id="inventoryPanel"></div>
+    </div>
+  {% else %}
+    <div class="need-login-message">Login required to access</div>
+  {% endif %}
+</div>
+
+{% if request.user.is_authenticated %}
+  <script id="left-items-data" type="application/json">{{ left_items_json|safe }}</script>
+{% endif %}
+
+<div id="howOverlay" class="how-overlay">
+  <div class="how-tut">
+    <div class="how-panel">
+      <span class="step-num">1</span><h4>SELECT</h4>
+      <p>Select at least 3 items from your inventory…</p>
+    </div>
+    <div class="how-panel">
+      <span class="step-num">2</span><h4>SIGN</h4>
+      <p>The higher the total value, the more valuable the skin you receive.</p>
+    </div>
+    <div class="how-panel">
+      <span class="step-num">3</span><h4>WIN</h4>
+      <p>Click and receive one valuable skin in return.</p>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/contracts.js' %}?v=2.0"></script>
+<script src="{% static 'js/toasts.js' %}"></script>
+</body>
+</html>

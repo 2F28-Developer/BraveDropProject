@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BraveDrop – {{ case.title }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token"     content="{{ csrf_token }}">
+  <meta name="case-price"     content="{{ case.price }}">
+  <meta name="user-balance"   content="{{ request.user.profile.balance|default:0 }}">
+  <meta name="spin-case-url"  content="{% url 'main:spin_case' case.slug %}">
+  <meta name="sell-items-url" content="{% url 'main:sell_items' %}">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap">
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+  <link rel="stylesheet" href="{% static 'css/case.css' %}">
+  <link rel="stylesheet" href="{% static 'css/header.css' %}">
+  <link rel="icon" href="{% static 'img/BrowIcon.png' %}" type="image/png">
+
+  <script id="case-data" type="application/json">
+    {{ case_items_json|safe }}
+  </script>
+</head>
+<body>
+
+  <div id="page-preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="top-header">
+    <div class="logo">
+      <button type="button" onclick="location.href='{% url 'main:cases_list' %}'">
+        <img src="{% static 'img/BraveLogo.png' %}" alt="LOGO">
+      </button>
+    </div>
+
+    <nav class="main-nav">
+      <button class="upgrade" onclick="location.href='{% url 'main:upgrades' %}'">
+        <span>UPGRADES</span>
+      </button>
+      <button class="contract" onclick="location.href='{% url 'main:contracts' %}'">
+        <span>CONTRACTS</span>
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      {% url 'social:begin' 'steam' as steam_login_url %}
+
+      {% if request.user.is_authenticated %}
+        <div class="profile-info">
+          <div class="profile-text">
+            <div class="nickname">{{ request.user.username }}</div>
+            <div class="balance" id="balanceValue">
+              ${{ request.user.profile.balance|floatformat:2 }}
+            </div>
+          </div>
+          <button class="profile-avatar-btn" onclick="location.href='{% url 'main:profile' %}'">
+            {% if request.user.profile.steam_avatar %}
+              <img class="profile-avatar" src="{{ request.user.profile.steam_avatar }}" alt="avatar">
+            {% else %}
+              <img class="profile-avatar" src="{% static 'img/placeholder_avatar.png' %}" alt="avatar">
+            {% endif %}
+          </button>
+        </div>
+      {% else %}
+        <div class="profile-info">
+          <a class="btn-login" href="{{ steam_login_url }}?next={{ request.path }}">
+            LOGIN
+            <img src="{% static 'img/SteamLogo.png' %}" alt="Steam" class="steam-logo">
+          </a>
+        </div>
+      {% endif %}
+
+      <div class="burger-menu-wrapper">
+        <button class="back-button" id="burgerBtn">
+          <img src="{% static 'img/BackButtonsIcon.png' %}" class="back-icon" alt="menu">
+        </button>
+        <div id="miniMenu" class="mini-menu">
+          {% if request.user.is_authenticated %}
+            <div class="mini-top">
+              {% if request.user.profile.steam_avatar %}
+                <img class="mini-avatar" src="{{ request.user.profile.steam_avatar }}" alt="avatar">
+              {% else %}
+                <img class="mini-avatar" src="{% static 'img/placeholder_avatar.png' %}" alt="avatar">
+              {% endif %}
+              <div class="mini-nick">{{ request.user.username }}</div>
+            </div>
+            <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:upgrades' %}'">UPGRADES</button>
+            <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:contracts' %}'">CONTRACTS</button>
+            <button class="mini-btn" onclick="location.href='{% url 'main:add_balance' %}'">REFILL</button>
+            <button class="mini-btn" onclick="location.href='{% url 'main:profile' %}'">PROFILE</button>
+            <button class="mini-exit" onclick="location.href='{% url 'main:logout' %}'">LOGOUT</button>
+          {% else %}
+            <div class="mini-top">
+              <img class="mini-avatar" src="{% static 'img/guest_avatar.png' %}" alt="Guest">
+              <div class="mini-nick">Guest</div>
+            </div>
+            <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:upgrades' %}'">UPGRADES</button>
+            <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:contracts' %}'">CONTRACTS</button>
+            <button class="mini-btn" onclick="location.href='{{ steam_login_url }}?next={{ request.path }}'">REFILL</button>
+            <button class="mini-btn" onclick="location.href='{{ steam_login_url }}?next={{ request.path }}'">PROFILE</button>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="menuDimmer" class="menu-dimmer"></div>
+
+  <h1 class="case-title">{{ case.title }}</h1>
+
+  <div class="case-roulette">
+    <div class="roulette-viewport">
+      <div class="indicator-bar top"></div>
+      <div class="roulette-track"></div>
+      <div class="indicator-bar bottom"></div>
+    </div>
+    <div class="action-area">
+      <div id="login-notice" class="btn-notice {% if not request.user.is_authenticated %}visible{% endif %}">
+        <span class="notice-text">Log in to open the case</span>
+      </div>
+      <div id="balance-notice" class="btn-notice {% if request.user.is_authenticated and need_amount %}visible{% endif %}">
+        <span class="notice-text">
+          You need <span class="notice-amount">${{ need_amount|floatformat:2 }}</span> more to open
+        </span>
+      </div>
+      <button id="open-btn" class="btn-main {% if request.user.is_authenticated and not need_amount %}visible{% endif %}">
+        OPEN FOR ${{ case.price|floatformat:2 }}
+      </button>
+      <div id="spinner-area">
+        <div class="spinner"></div>
+        <div class="spinner-text">Opening...</div>
+      </div>
+      <div id="result-area" class="result-buttons">
+        <button id="sell-btn" class="btn-result">Sell</button>
+        <button id="again-btn" class="btn-result">Again</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-title" id="content-title">Case Contents</div>
+  <div class="content-cards" id="content-cards"></div>
+  <div id="toastContainer"></div>
+
+  <script src="{% static 'js/case.js' %}"></script>
+  <script src="{% static 'js/toasts.js' %}"></script>
+</body>
+</html>

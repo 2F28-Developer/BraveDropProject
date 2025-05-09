@@ -1,0 +1,200 @@
+/* === Icons & Header ===
+   Margin below the header */
+header {
+  margin-bottom: 20px;
+}
+
+/* === Container ===
+   Page container max-width and padding */
+.container {
+  max-width: 1500px;
+  margin: 12px auto 0;
+  padding: 20px;
+}
+
+/* === Case Section ===
+   Centered flex column for each section */
+.case-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* === Section Title ===
+   Uppercase heading styling */
+.section-title {
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+/* === Cases Grid ===
+   Wrap and gap layout for cards */
+.cases-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* === Case Card ===
+   Base size, radius, and transitions */
+.case-card {
+  flex: 0 1 250px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  height: 280px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* === Case Card Hover Effect ===
+   Lift and shadow on hover */
+.case-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+/* === Link Wrapper ===
+   Make the entire card clickable */
+.case-card a {
+  display: block;
+  width: 100%;
+  height: 100%;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* === Image ===
+   Center the case image */
+.case-card img {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 80%;
+  max-height: 80%;
+  object-fit: contain;
+  z-index: 2;
+}
+
+/* === Info Overlay ===
+   Always-visible title and item count */
+.case-card .info {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 4;
+}
+.info-title {
+  color: #fff;
+  font-size: 0.99rem;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  white-space: nowrap;
+}
+.info-count {
+  color: #ccc;
+  font-size: 0.81rem;
+  margin-top: 4px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+  white-space: nowrap;
+}
+
+/* === Hover Overlay Background ===
+   Semi-transparent layer on hover */
+.case-card .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(128, 128, 128, 0.3);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 1;
+}
+.case-card:hover .overlay {
+  opacity: 0.4;
+}
+
+/* === Price Block ===
+   Position old and current prices */
+.overlay-price {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 4;
+}
+.overlay-price .old-price {
+  text-decoration: line-through;
+  color: #888;
+  font-size: 0.81rem;
+  margin: 0 0 4px;
+  white-space: nowrap;
+}
+.overlay-price .current-price {
+  font-size: 0.99rem;
+  font-weight: 700;
+  color: #ffbe55;
+  white-space: nowrap;
+}
+
+/* === Responsive: small screens ===
+   Adjust card size and fonts under 560px */
+@media (max-width: 560px) {
+  .case-card {
+    flex: 0 0 187.5px;
+    width: 187.5px;
+    height: 210px;
+  }
+  .case-card .info-title { font-size: 0.74rem; }
+  .case-card .info-count { font-size: 0.61rem; }
+  .overlay-price .old-price { font-size: 0.61rem; }
+  .overlay-price .current-price { font-size: 0.74rem; }
+}
+
+/* === Responsive: very small ===
+   Further tweaks under 440px */
+@media (max-width: 440px) {
+  .case-card {
+    flex: 0 0 150px;
+    width: 150px;
+    height: 168px;
+  }
+  .case-card .info-title { font-size: 0.60rem; }
+  .case-card .info-count { font-size: 0.49rem; }
+  .overlay-price .old-price { font-size: 0.49rem; }
+  .overlay-price .current-price { font-size: 0.60rem; }
+}
+
+/* === Responsive: disable hover ===
+   Remove hover effects under 1020px */
+@media (max-width: 1020px) {
+  .case-card {
+    transition: none !important;
+  }
+  .case-card:hover {
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .case-card .overlay {
+    opacity: 0 !important;
+    transition: none !important;
+    background: transparent !important;
+  }
+  .case-card .info,
+  .case-card .overlay-price {
+    transition: none !important;
+  }
+}
+

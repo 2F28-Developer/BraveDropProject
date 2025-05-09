@@ -1,0 +1,389 @@
+/* === Constants === */
+:root {
+  --hdr-h-dt:   94px;
+  --hdr-h-mb:   68px;
+  --hdr-pad-dt: 20px;
+  --hdr-pad-mb: 12px;
+
+  --gap-main:         24px;
+  --gap-avatar-text:  20px;
+  --gap-text-items:   4px;
+  --gap-burger:       5px;
+
+  --logo-w-dt: 145px;
+  --logo-w-mb: 100px;
+  --ava-dt:    50px;
+  --ava-mb:    36px;
+  --btn-w-dt:  45px;
+  --btn-h-dt:  40px;
+  --btn-w-mb:  36px;
+  --btn-h-mb:  32px;
+  --ico-dt:    40px;
+  --ico-mb:    28px;
+
+  --font-nav-dt: 18px;
+  --font-nav-mb: 16px;
+  --font-text-dt:14px;
+  --font-text-mb:12px;
+
+  --clr-yellow:   #ffbe55;
+  --clr-grey:     #ccc;
+  --clr-text-dim: #888;
+  --hdr-bg:       #1b1c24;
+  --radius-s:     8px;
+  --tr-fast:      .3s ease;
+}
+
+/* === Header Layout === */
+.top-header {
+  display: flex;
+  align-items: center;
+  height: var(--hdr-h-dt);
+  padding: 0 var(--hdr-pad-dt);
+  column-gap: var(--gap-main);
+  background: var(--hdr-bg);
+  position: relative;
+}
+
+/* === Logo Styles === */
+.logo button {
+  all: unset;
+  display: flex;
+  cursor: pointer;
+}
+.logo img {
+  width: var(--logo-w-dt);
+  height: 60px;
+  object-fit: cover;
+  border-radius: var(--radius-s);
+  transition: filter var(--tr-fast);
+}
+.logo img:hover {
+  filter: brightness(.7);
+}
+
+/* === Main Navigation === */
+.main-nav {
+  display: flex;
+  align-items: center;
+  margin: 0 auto 0 0px;
+  column-gap: var(--gap-main);
+}
+.main-nav a,
+.main-nav button {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 700 var(--font-nav-dt)/1 'Montserrat', sans-serif;
+  color: var(--clr-grey);
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color var(--tr-fast);
+}
+.main-nav a:hover,
+.main-nav button:hover {
+  color: var(--clr-yellow);
+}
+.main-nav img {
+  filter: brightness(.35) sepia(.3) saturate(250%) hue-rotate(180deg);
+  transition: filter .4s cubic-bezier(.4,0,.2,1);
+}
+.main-nav a:hover img,
+.main-nav button:hover img {
+  filter: sepia(1) saturate(900%) hue-rotate(-15deg)
+          brightness(1.05) contrast(1.1);
+}
+
+/* === Profile Section === */
+.profile-info {
+  display: flex;
+  align-items: center;
+}
+.profile-avatar-btn {
+  all: unset;
+  display: inline-flex;
+  cursor: pointer;
+}
+.profile-avatar-btn img {
+  width: var(--ava-dt);
+  height: var(--ava-dt);
+  border-radius: 50%;
+  object-fit: cover;
+}
+.profile-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-left: var(--gap-avatar-text) !important;
+  gap: var(--gap-text-items);
+}
+.nickname,
+.balance {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 11px;
+}
+.nickname {
+  max-width: 15ch;
+  min-width: 15ch;
+  font: 500 var(--font-text-dt) 'Montserrat', sans-serif;
+  color: var(--clr-text-dim);
+  text-align: right;
+}
+.balance {
+  font: 700 var(--font-text-dt)/1 'Montserrat', sans-serif;
+  color: #fff;
+  min-width: 15ch;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  transition: color .6s ease;
+}
+.balance-change {
+  color: var(--clr-yellow) !important;
+}
+
+.nickname::after,
+.balance::after {
+  content: "\00A0\00A0\00A0";
+}
+
+/* === Burger & Back Button === */
+.burger-menu-wrapper {
+  position: relative;
+  margin-left: var(--gap-burger);
+  z-index: 1001;
+}
+.back-button {
+  all: unset;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  cursor: pointer;
+  transition: filter var(--tr-fast);
+  z-index: 1002;
+}
+.back-button:hover,
+.back-button.active {
+  filter: brightness(1.2);
+}
+.back-button .back-icon {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+.btn-login {
+  background: #e9ab39;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.3s;
+  padding: 8px 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-login:hover {
+  filter: brightness(1.1);
+}
+.steam-logo {
+  width: 20px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+/* === Mini-Menu & Dimmer === */
+.menu-dimmer {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.65);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s;
+  z-index: 1000;
+}
+.menu-dimmer.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+.mini-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 240px;
+  max-width: 70vw;
+  min-width: 180px;
+  background: #1e1e27;
+  border-radius: 10px;
+  padding: 16px 16px 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.45);
+  transform: scale(.95);
+  opacity: 0;
+  pointer-events: none;
+  transition: all .35s cubic-bezier(.4,0,.2,1);
+  z-index: 1003;
+}
+.mini-menu.show {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+.mini-menu::after {
+  content: "";
+  position: absolute;
+  top: -7px;
+  right: 13px;
+  width: 14px;
+  height: 14px;
+  background: #1e1e27;
+  transform: rotate(45deg);
+}
+
+/* === Mini-Menu Content === */
+.mini-top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.mini-avatar {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.mini-nick {
+  font: 700 14px 'Montserrat', sans-serif;
+  color: #fff;
+}
+.mini-btn,
+.mini-exit {
+  width: 100%;
+  padding: 10px 0;
+  margin-top: 8px;
+  font: 700 12px/1 'Montserrat', sans-serif;
+  letter-spacing: .5px;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: filter .25s;
+}
+.mini-btn {
+  background: #23232d;
+  color: var(--clr-yellow);
+}
+.mini-btn:hover {
+  filter: brightness(1.1);
+}
+.mini-exit {
+  background: #c3545b;
+  color: #fff;
+  margin-top: 20px;
+}
+.mini-exit:hover {
+  filter: brightness(1.1);
+}
+.mini-menu .mobile-only {
+  display: none !important;
+}
+
+/* === Adaptive (<1020px) === */
+@media (max-width: 1020px) {
+  .top-header {
+    height: var(--hdr-h-mb);
+    padding: 0 var(--hdr-pad-mb);
+    column-gap: 0;
+  }
+  .main-nav {
+    display: none !important;
+  }
+  .logo img {
+    width: var(--logo-w-mb);
+    height: auto;
+  }
+  .profile-avatar-btn img {
+    width: var(--ava-mb);
+    height: var(--ava-mb);
+  }
+  .back-button {
+    width: 32px;
+    height: 32px;
+  }
+  .back-button .back-icon {
+    width: 20px;
+    height: 20px;
+  }
+  .mini-btn, .mini-exit {
+    padding: 16px 0;
+  }
+  .mini-menu .mobile-only {
+    display: block !important;
+  }
+  .mini-menu {
+    width: 70vw;
+    max-width: none;
+    right: -4px !important;
+  }
+  .nickname,
+  .balance {
+    font-size: 12px;
+  }
+  .btn-login {
+    font-size: 12px;
+    padding: 4px 12px;
+  }
+}
+
+/* === Toasts === */
+#toastContainer {
+  position: fixed;
+  top: 10px;
+  right: 20px;
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9999;
+}
+.toast-item {
+  position: relative;
+  border-radius: 8px;
+  padding: 14px 18px;
+  overflow: hidden;
+  color: #fff;
+  font: 400 13px 'Montserrat', sans-serif;
+  cursor: pointer;
+  transition: margin-bottom 0.4s ease;
+}
+.toast-item.show {
+  animation: toastIn 0.4s ease-out forwards;
+}
+.toast-item.hide {
+  animation: toastOut 0.4s ease-in forwards;
+}
+.toast-item .progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 3px;
+  background: #fff;
+  width: 100%;
+}
+@keyframes toastIn {
+  0%   { transform: translateX(120%); opacity: 0.5; }
+  40%  { transform: translateX(-10%); }
+  60%  { transform: translateX(5%); }
+  80%  { transform: translateX(-2%); }
+ 100%  { transform: translateX(0); opacity: 1; }
+}
+@keyframes toastOut {
+  0%   { transform: translateX(0); opacity: 1; }
+ 100%  { transform: translateX(120%); opacity: 0; }
+}

@@ -1,0 +1,257 @@
+{% load static %}
+{% load dict_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <meta name="update-trade-url" content="{% url 'main:update_trade_url' %}">
+  <meta name="sell-items-url"    content="{% url 'main:sell_items' %}">
+  <meta name="buy-for-item-url"  content="{% url 'main:buy_for_item' %}">
+  <meta name="poll-withdrawals-url" content="{% url 'main:poll-withdrawals-url' %}">
+  <title>BraveDrop – Profile</title>
+  <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;900&display=swap">
+  <link rel="stylesheet" href="{% static 'css/header.css' %}">
+  <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+  <link rel="icon" href="{% static 'img/BrowIcon.png' %}" type="image/png">
+</head>
+<body>
+  <div id="page-preloader">
+    <div class="spinner"></div>
+  </div>
+
+  <div class="top-header">
+    <div class="logo">
+      <button type="button" onclick="location.href='{% url 'main:cases_list' %}'">
+        <img src="{% static 'img/BraveLogo.png' %}" alt="LOGO">
+      </button>
+    </div>
+
+    <nav class="main-nav">
+      <button class="upgrade" onclick="location.href='{% url 'main:upgrades' %}'">
+        <span>UPGRADES</span>
+      </button>
+      <button class="contract" onclick="location.href='{% url 'main:contracts' %}'">
+        <span>CONTRACTS</span>
+      </button>
+    </nav>
+
+    <div class="header-actions">
+      <div class="profile-info">
+        <div class="profile-text">
+          <div class="nickname">{{ user.username }}</div>
+          <div class="balance" id="balanceValue">${{ profile.balance|floatformat:2 }}</div>
+        </div>
+        <button class="profile-avatar-btn" onclick="location.href='{% url 'main:profile' %}'">
+          {% if profile.steam_avatar %}
+            <img class="profile-avatar" src="{{ profile.steam_avatar }}" alt="avatar">
+          {% else %}
+            <img class="profile-avatar" src="{% static 'img/placeholder_avatar.png' %}" alt="avatar">
+          {% endif %}
+        </button>
+      </div>
+
+      <div class="burger-menu-wrapper">
+        <button class="back-button" id="burgerBtn">
+          <img src="{% static 'img/BackButtonsIcon.png' %}" class="back-icon" alt="menu">
+        </button>
+        <div id="miniMenu" class="mini-menu">
+          <div class="mini-top">
+            {% if profile.steam_avatar %}
+              <img class="mini-avatar" src="{{ profile.steam_avatar }}" alt="avatar">
+            {% else %}
+              <img class="mini-avatar" src="{% static 'img/placeholder_avatar.png' %}" alt="avatar">
+            {% endif %}
+            <div class="mini-nick">{{ user.username }}</div>
+          </div>
+          <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:upgrades' %}'">
+            UPGRADES
+          </button>
+          <button class="mini-btn mobile-only" onclick="location.href='{% url 'main:contracts' %}'">
+            CONTRACTS
+          </button>
+          <button class="mini-btn" onclick="location.href='{% url 'main:add_balance' %}'">
+            REFILL
+          </button>
+          <button class="mini-btn" onclick="location.href='{% url 'main:profile' %}'">
+            Profile
+          </button>
+          <button class="mini-exit" onclick="location.href='{% url 'main:logout' %}'">
+            Logout
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="menuDimmer" class="menu-dimmer"></div>
+
+  <div class="main-container">
+    <div class="profile-panels">
+      <div class="panel-profile" id="panelProfile">
+        <div class="profile-panel-inner">
+          <div class="pp-left">
+            {% if profile.steam_avatar %}
+              <img class="mini-avatar" src="{{ profile.steam_avatar }}" alt="avatar">
+            {% else %}
+              <img class="mini-avatar" src="{% static 'img/placeholder_avatar.png' %}" alt="avatar">
+            {% endif %}
+            <div class="pp-info">
+              <div class="pp-nickname">{{ user.username }}</div>
+              <div class="pp-balance" id="profileBalance">${{ profile.balance|floatformat:2 }}</div>
+            </div>
+          </div>
+          <div class="pp-right">
+            <button class="btn-balance" id="balanceBtn">
+              REFILL
+              <img src="{% static 'img/RefillIcon.png' %}" class="icon-right" alt=""/>
+            </button>
+            <button class="btn-trade" id="tradeLinkBtn">
+              TRADE URL
+              <img src="{% static 'img/TradeUrlIcon.png' %}" class="icon-right" alt=""/>
+            </button>
+          </div>
+        </div>
+        <div class="trade-popup" id="tradePopup">
+          <div class="trade-header">
+            <div class="trade-title">
+              <img src="{% static 'img/UrlIcon.png' %}" class="icon-left" alt=""/>
+              Trade URL
+            </div>
+            <button class="btn-help-link" id="whereFindBtn">Where to find?</button>
+          </div>
+          <div class="trade-row">
+            <input type="text" id="tradeUrlInput" class="trade-url-input"
+                   placeholder="{{ profile.trade_url|default:'https://steamcommunity.com/tradeoffer/new/?partner=&token=' }}">
+            <button class="btn-trade-save" id="saveTradeUrlBtn" disabled>Save</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel-case">
+        <div class="panel-inner">
+          {% if favorite_case %}
+            <div class="panel-left-part">
+              <div class="panel-title">FAVORITE CASE</div>
+              <div class="drop-skin-name">{{ favorite_case.title }}</div>
+              <button class="btn-open-case"
+                      onclick="window.location.href='{% url 'main:case_detail' favorite_case.slug %}'">
+                OPEN
+              </button>
+            </div>
+            <div class="panel-right-rect" style="position:relative; overflow:hidden; background:#444;">
+              <div style="position:absolute; inset:0;
+                          background:url('{% static 'img/LogoItems.png' %}') center/50px no-repeat;
+                          opacity:.28; pointer-events:none;"></div>
+              <img src="{{ favorite_case.box_image.url }}" alt=""
+                   style="position:relative; width:100%; height:100%; object-fit:contain;">
+            </div>
+          {% else %}
+            <div class="panel-left-part">
+              <div class="panel-title">FAVORITE CASE</div>
+              <div class="panel-note">None yet</div>
+              <button class="btn-open-case" onclick="window.location.href='/'">OPEN</button>
+            </div>
+            <div class="panel-right-rect" style="position:relative; overflow:hidden; background:#444;">
+              <div style="position:absolute; inset:0;
+                          background:url('{% static 'img/LogoItems.png' %}') center/50px no-repeat;
+                          opacity:.28; pointer-events:none;"></div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="panel-case">
+        <div class="panel-inner">
+          {% if best_drop_item %}
+            <div class="panel-left-part">
+              <div class="panel-title">BEST DROP</div>
+              {% if best_drop_item.skin_name %}
+                <div class="drop-skin-name">{{ best_drop_item.skin_name }}</div>
+              {% endif %}
+              <div class="drop-price">${{ best_drop_item.price|floatformat:2 }}</div>
+            </div>
+            <div class="panel-right-rect" style="position:relative; overflow:hidden; background:#1b1b22;">
+              <div style="position:absolute; inset:0;
+                          --r-full:{{ best_drop_item.rarity.color|default:'#ff9800' }};
+                          --r-light:{{ best_drop_item.rarity.color|default:'#ff9800' }}33;
+                          background:linear-gradient(160deg, var(--r-full) 0%, var(--r-light) 100%);
+                          opacity:.35; pointer-events:none;"></div>
+              <div style="position:absolute; inset:0;
+                          background:url('{% static 'img/LogoItems.png' %}') center/50px no-repeat;
+                          opacity:.28; pointer-events:none;"></div>
+              <img src="{{ best_drop_item.image.url }}" alt=""
+                   style="position:relative; width:100%; height:100%; object-fit:contain;">
+            </div>
+          {% else %}
+            <div class="panel-left-part">
+              <div class="panel-title">BEST DROP</div>
+              <div class="panel-note">None yet</div>
+              <button class="btn-open-case" onclick="window.location.href='/'">OPEN</button>
+            </div>
+            <div class="panel-right-rect" style="position:relative; overflow:hidden; background:#444;">
+              <div style="position:absolute; inset:0;
+                          background:url('{% static 'img/LogoItems.png' %}') center/50px no-repeat;
+                          opacity:.28; pointer-events:none;"></div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="items-panel">
+      <div class="items-left">
+        <img src="{% static 'img/ItemsIcon.png' %}" class="icon-left" alt=""/>
+        Items
+      </div>
+      <div class="items-right">
+        <button class="btn-items" id="sellAllBtn" disabled>Sell All</button>
+        <button class="btn-items" id="sellBtn" disabled>Sell</button>
+        <button class="btn-items" id="withdrawBtn" disabled>Withdraw</button>
+      </div>
+    </div>
+
+    <div id="inventoryWrapper">
+     <div class="inventory-panel" id="inventoryPanel">
+       <div class="inventory-overlay" id="inventoryOverlay">
+         <div class="overlay-content">
+           <div class="spinner"></div>
+           <div id="overlayText"></div>
+         </div>
+       </div>
+
+       {% if inventory_items %}
+         {% for inv_item in inventory_items %}
+           <div class="item-card{% if inv_item.pending %} pending{% endif %}" data-item-id="{{ inv_item.id }}"
+                style="--r-full:{{ inv_item.item.rarity.color|default:'#ff9800' }};
+                      --r-light:{{ inv_item.item.rarity.color|default:'#ff9800' }}33;">
+             <span class="item-weapon">{{ inv_item.item.weapon_name }}</span>
+             {% if inv_item.item.skin_name %}
+               <span class="item-skin">{{ inv_item.item.skin_name }}</span>
+             {% endif %}
+             {% if inv_item.item.image %}
+               <img src="{{ inv_item.item.image.url }}" alt="" class="item-img">
+             {% else %}
+               <div class="img-placeholder"></div>
+             {% endif %}
+             <span class="item-price">${{ inv_item.item.price|floatformat:2 }}</span>
+           </div>
+         {% endfor %}
+       {% else %}
+         <div class="no-items-inv">
+           <div class="no-items-label">No items</div>
+           <button class="no-items-open" onclick="window.location.href='/'" style="padding:11px 16px;">
+             OPEN
+           </button>
+         </div>
+       {% endif %}
+     </div>
+   </div>
+  </div>
+
+  <div id="toastContainer"></div>
+  <script src="{% static 'js/profile.js' %}"></script>
+  <script src="{% static 'js/toasts.js' %}"></script>
+</body>
+</html>

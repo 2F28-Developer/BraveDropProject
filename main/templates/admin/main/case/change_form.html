@@ -1,0 +1,21 @@
+{# templates/admin/main/case/change_form.html #}
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+
+{% block object-tools %}
+  {{ block.super }}
+  {% if change %}
+    <li>
+      <a class="addlink"
+         href="{% url 'admin:main_case_set_chances' original.pk %}">
+        Set chances
+      </a>
+    </li>
+    <li>
+      <a class="addlink"
+         href="{% url 'admin:main_case_import_items' original.pk %}">
+        Import items
+      </a>
+    </li>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,622 @@
+/* === RESET === */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #17171f;
+  color: #ccc;
+  font-family: 'Montserrat', sans-serif;
+  user-select: none;
+}
+
+/* === MAIN LAYOUT === */
+.main-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  padding: 0 20px 40px;
+}
+
+.contracts-page-title {
+  color: #fff;
+  text-align: center;
+  margin: 30px 0;
+  font-weight: 700;
+}
+
+/* === NEED-LOGIN BANNER (guest) === */
+.need-login-message {
+  color: #fff;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 32px;
+  font-weight: 900;
+  text-align: center;
+  margin: 114px 20px;
+}
+
+/* === SECTION TITLE (Available items…) === */
+.contracts-heading {
+  color: #fff;
+  text-align: center;
+  margin: 20px 0;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+/* === CONTRACT SECTION (circle, slots, panels, result) === */
+.contract-section {
+  position: relative;
+  padding: 225px 0 245px;
+  text-align: center;
+}
+
+.contract-bg-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 400px;
+  height: 400px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: rgba(30, 30, 39, 0.4);
+  z-index: 0;
+}
+
+/* --- SLOTS --- */
+.contract-circle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 450px;
+  height: 450px;
+  transform: translate(-50%, -50%);
+  will-change: transform;
+  z-index: 1;
+}
+
+.slot {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: #1c1f26;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  font-size: 1.4em;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.55s cubic-bezier(.4, 0, .2, 1),
+              opacity 0.35s,
+              color 0.35s;
+  will-change: transform;
+}
+
+/* positions around the circle (1–10) */
+.contract-circle .slot:nth-child(1) {
+  top: -5px;
+  left: 185px;
+}
+.contract-circle .slot:nth-child(2) {
+  top: 37px;
+  left: 298px;
+}
+.contract-circle .slot:nth-child(3) {
+  top: 133px;
+  left: 362px;
+}
+.contract-circle .slot:nth-child(4) {
+  top: 241px;
+  left: 362px;
+}
+.contract-circle .slot:nth-child(5) {
+  top: 335px;
+  left: 298px;
+}
+.contract-circle .slot:nth-child(6) {
+  top: 377px;
+  left: 185px;
+}
+.contract-circle .slot:nth-child(7) {
+  top: 335px;
+  left: 72px;
+}
+.contract-circle .slot:nth-child(8) {
+  top: 241px;
+  left: 8px;
+}
+.contract-circle .slot:nth-child(9) {
+  top: 133px;
+  left: 8px;
+}
+.contract-circle .slot:nth-child(10) {
+  top: 37px;
+  left: 72px;
+}
+
+.slot img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: contain;
+  opacity: 0;
+  transform: scale(.6);
+  transition: opacity .3s, transform .3s;
+}
+
+.slot img.loaded {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* fly/back animations */
+.slot.fly {
+  transform: translate(var(--dx), var(--dy)) scale(.5);
+  opacity: .25;
+}
+.slot.back {
+  transform: none;
+  opacity: 1;
+}
+
+/* === CONTRACT-CREATION PANEL === */
+.contract-center {
+  position: absolute;
+  top: 49%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  z-index: 2;
+  transition: opacity .3s, visibility .3s;
+}
+
+.contract-center.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.contract-panel {
+  background: rgba(30, 30, 39, 0.9);
+  padding: 14px 24px;
+  border-radius: 23px;
+}
+
+.contract-title {
+  color: #fff;
+  font-size: 1.1em;
+  margin-bottom: 6px;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.contract-action {
+  width: 200px;
+  padding: 8px 0;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  background: #171720;
+  color: #aaa;
+  cursor: default;
+  white-space: nowrap;
+  transition: background-color .4s, color .4s, filter .4s;
+}
+.contract-action:enabled {
+  background: #ffbe55;
+  color: #333;
+  cursor: pointer;
+}
+.contract-action:enabled:hover {
+  filter: brightness(1.1);
+}
+.contract-action:active {
+  transform: none;
+}
+
+.contract-hint {
+  color: #fff;
+  font-size: .9em;
+  white-space: nowrap;
+}
+
+/* HOW-TO button */
+.btn-how {
+  width: 200px;
+  margin-bottom: 2px;
+  padding: 8px 0;
+  border: none;
+  border-radius: 10px;
+  background: #2e2e38;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: filter .25s;
+}
+
+.btn-how.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.btn-how:hover {
+  filter: brightness(1.15);
+}
+
+/* === RESULT PANEL === */
+.contract-result {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 260px;
+  padding: 24px 20px;
+  border-radius: 16px;
+  background: #1f2028;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  transform: translate(-50%, -50%) scale(.6);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s, transform .35s;
+  z-index: 5;
+}
+
+.contract-result.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.result-title {
+  color: #ffbe55;
+  font-weight: 800;
+}
+
+.result-img {
+  width: 120px;
+  height: 120px;
+  background: center/contain no-repeat;
+}
+
+.result-name {
+  color: #fff;
+  font-weight: 700;
+  text-align: center;
+}
+
+.result-price {
+  color: #ffbe55;
+  font-weight: 700;
+}
+
+/* === INVENTORY === */
+#inventoryWrapper {
+  margin-top: 20px;
+  position: relative;
+  border: 2px dashed #4d4d4d;
+  border-radius: 8px;
+  background: #1b1b25;
+  overflow: hidden;
+  transition: height .45s;
+}
+
+.inventory-panel {
+  padding: 20px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* placeholder “No items” */
+.no-items-inv {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  opacity: 0;
+  transition: opacity .35s;
+}
+
+.no-items-inv.show {
+  opacity: 1;
+}
+
+.no-items-label {
+  color: #fff;
+  font-weight: 700;
+}
+
+.no-items-open {
+  background: #ffbe55;
+  color: #333;
+  border: none;
+  border-radius: 6px;
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: filter .3s;
+}
+
+.no-items-open:hover {
+  filter: brightness(1.1);
+}
+
+/* === HOW-TO OVERLAY === */
+.how-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, .6);
+  z-index: 5000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s;
+}
+
+.how-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.how-tut {
+  margin-top: 0;
+}
+
+.how-panel {
+  position: relative;
+  margin: 0 auto 14px;
+  background: #1b1d23;
+  border-radius: 10px;
+  padding: 22px 24px 22px 72px;
+  color: #fff;
+  transform: translateY(-40px);
+  opacity: 0;
+  transition: transform .45s cubic-bezier(.18, .9, .22, 1),
+              opacity .45s;
+}
+
+.how-panel.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.how-panel h4 {
+  margin: 0 0 8px;
+  font-size: 18px;
+  font-weight: 900;
+  letter-spacing: .5px;
+}
+
+.how-panel p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #ccc;
+}
+
+.step-num {
+  position: absolute;
+  left: 24px;
+  top: 24px;
+  width: 34px;
+  height: 34px;
+  border: 2px solid #ffbe55;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #17171f;
+  color: #ffbe55;
+  font: 900 16px/1 'Montserrat';
+  transform: rotateX(90deg);
+  transition: transform .45s;
+}
+
+.step-num.show {
+  transform: rotateX(0);
+}
+
+body.no-scroll {
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* === MEDIA ADAPTIVE === */
+@media (max-width: 1024px) {
+  .contract-circle,
+  .contract-bg-circle {
+    transform: translate(-50%, -52%) scale(.85);
+  }
+  .contract-center,
+  .contract-result {
+    transform: translate(-50%, -48%) scale(.85);
+  }
+  .contract-section {
+    padding: 190px 0 210px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contract-circle,
+  .contract-bg-circle {
+    transform: translate(-50%, -50%) scale(.7);
+  }
+  .contract-center,
+  .contract-result {
+    transform: translate(-50%, -45%) scale(.7);
+  }
+  .contract-section {
+    padding: 160px 0 180px;
+  }
+  .contract-panel {
+    padding: 12px 20px;
+  }
+  .contract-action {
+    width: 160px;
+    padding: 6px 0;
+    font-size: .9em;
+  }
+  .btn-how {
+    width: 160px;
+    padding: 6px 0;
+    font-size: .9em;
+  }
+  .contracts-heading {
+    margin: 15px 0;
+    font-size: .95em;
+  }
+}
+
+@media (max-width: 480px) {
+  .contract-circle,
+  .contract-bg-circle {
+    transform: translate(-50%, -48%) scale(.6);
+  }
+  .contract-center,
+  .contract-result {
+    transform: translate(-50%, -42%) scale(.6);
+  }
+  .contract-section {
+    padding: 140px 0 160px;
+  }
+  .contract-panel {
+    padding: 10px 16px;
+  }
+  .contract-action {
+    width: 140px;
+    padding: 6px 0;
+    font-size: .8em;
+  }
+  .btn-how {
+    width: 140px;
+    padding: 6px 0;
+    font-size: .8em;
+  }
+  .contracts-heading {
+    margin: 10px 0;
+    font-size: .9em;
+  }
+}
+
+/* === SPINNER keyframes === */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* === Inventory card animations === */
+.item-card {
+  transition: transform .35s, opacity .35s;
+}
+
+.item-card.enter {
+  transform: scale(.3);
+  opacity: 0;
+}
+
+.item-card.enter-active {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.item-card.exit {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.item-card.exit-active {
+  transform: scale(0);
+  opacity: 0;
+}
+
+/* === Busy overlay over inventory === */
+.inventory-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, .45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .35s;
+}
+
+.inventory-overlay.show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.inventory-overlay .spinner {
+  width: 34px;
+  height: 34px;
+  border: 4px solid #ccc;
+  border-top-color: #ffbe55;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* === HOW-TO mobile tweaks === */
+@media (max-width: 500px) {
+  .how-tut {
+    max-width: 92vw;
+  }
+
+  .how-panel {
+    padding: 18px 20px 18px 64px;
+    border-radius: 8px;
+  }
+
+  .how-panel h4 {
+    font-size: 16px;
+  }
+
+  .how-panel p {
+    font-size: 13px;
+  }
+
+  .step-num {
+    left: 18px;
+    top: 18px;
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
+  }
+}
+
+body.no-scroll {
+  overflow: hidden;
+  touch-action: none;
+}
+@media (hover: none), (pointer: coarse) {
+  .item-img,
+  .img-placeholder {
+    transition: none !important;
+  }
+
+  .item-card.selected .item-img,
+  .item-card.selected .img-placeholder,
+  .item-card.pending .item-img,
+  .item-card.pending .img-placeholder,
+  .item-card.withdrawing .item-img,
+  .item-card.withdrawing .img-placeholder,
+  .item-card.selling .item-img,
+  .item-card.selling .img-placeholder {
+    transform: translate(-50%, -50%) !important;
+  }
+  .item-card:not(.selected) .item-img,
+  .item-card:not(.selected) .img-placeholder {
+    transform: translate(-50%, -50%) !important;
+  }
+}
